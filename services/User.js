@@ -1,5 +1,5 @@
-// const baseUrl = 'https://razion-apis.herokuapp.com/'
-const baseUrl = 'http://192.168.100.100:3333/'
+const baseUrl = 'https://razion-apis.herokuapp.com/'
+// const baseUrl = 'http://192.168.100.100:3333/'
 const headers = () => {
 	if (!app.user)
 		return
