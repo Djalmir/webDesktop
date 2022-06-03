@@ -156,14 +156,14 @@ template.innerHTML = /*html*/`
 			<b z-model="name"></b>
 			<div id="headerBtnsDiv">
 				<button>
-					<img src="../assets/minimize.svg">
+					<img src="./assets/minimize.svg">
 				</button>
 				<button z-onclick="maximize">
-					<img src="../assets/restore.svg" z-if="maximized">
-					<img src="../assets/maximize.svg" z-else>
+					<img src="./assets/restore.svg" z-if="maximized">
+					<img src="./assets/maximize.svg" z-else>
 				</button>
 				<button class="redBt" z-onclick="close">
-					<img src="../assets/close.svg">
+					<img src="./assets/close.svg">
 				</button>
 			</div>
 		</header>
