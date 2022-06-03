@@ -329,7 +329,6 @@ export default class Explorer extends HTMLElement {
 									})
 								}
 
-								console.log(Array.from(this.aside.querySelectorAll('details')))
 								Array.from(this.aside.querySelectorAll('details')).map((d) => {
 									if (d.id == `details_${ this.directory }`) {
 										// if (d.querySelector('details'))
@@ -387,7 +386,7 @@ export default class Explorer extends HTMLElement {
 				this.rmFolderFocus = (e) => {
 					let mx = e.touches ? e.touches[e.touches.length - 1].clientX : e.clientX
 					let my = e.touches ? e.touches[e.touches.length - 1].clientY : e.clientY
-					console.log(this.shadowRoot.elementFromPoint(mx, my))
+
 					if (this.shadowRoot.elementFromPoint(mx, my).id == 'section') {
 						Array.from(this.section.querySelectorAll('app-folder')).map((folder) => {
 							folder.focused = false

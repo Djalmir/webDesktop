@@ -4,8 +4,8 @@ import Desktop from './views/desktop.js'
 // import Menu from './components/menu.js'
 import ErrorMsgs from './components/errorMsgs.js'
 import zionLoading from './components/loading.js'
-import ContextMenu from '../components/contextMenu.js'
-import Confirm from '../components/confirm.js'
+import ContextMenu from './components/contextMenu.js'
+import Confirm from './components/confirm.js'
 
 const routes = {
 	'#/': Home,

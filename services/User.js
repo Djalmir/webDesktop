@@ -1,5 +1,5 @@
-const baseUrl = 'https://razion-apis.herokuapp.com/'
-// const baseUrl = 'http://192.168.100.100:3333/'
+// const baseUrl = 'https://razion-apis.herokuapp.com/'
+const baseUrl = 'http://192.168.100.100:3333/'
 const headers = () => {
 	if (!app.user)
 		return
@@ -12,7 +12,6 @@ const User = {
 
 	//Folders
 	createFolder: (body) => {
-		console.log(app)
 		return zPost(`${ baseUrl }webDesktop/folder/create`, body, headers())
 	},
 	getFolders: (parentFolder) => {
