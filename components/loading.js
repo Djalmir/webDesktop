@@ -24,7 +24,7 @@ style.textContent = /*css*/`
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
 	<div id="loadingWrapper"><!--z-if não funcionou com position: fixed. Usar o z-if quando corrigido-->
-		<img src="../assets/loading.svg">
+		<img src="./assets/loading.svg">
 	</div>
 `
 
