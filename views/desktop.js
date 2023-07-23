@@ -120,7 +120,7 @@ export default class Desktop extends HTMLElement {
 								}
 								this.backgroundImages.push(photo)
 							}
-							this.backgroundImages = res.photos
+							// this.backgroundImages = res.photos
 							this.setBackgroundImage()
 						}
 					})
