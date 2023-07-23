@@ -90,8 +90,8 @@ export default class Desktop extends HTMLElement {
 
 			this.backgroundImages = []
 			this.recentSearches = JSON.parse(localStorage.getItem('webDesktop.recentSearches')) || []
-			// this.searchList = ['Nature', 'City', 'Rain', 'Sunset', 'Ocean', 'Islands', 'Thunderstorm', 'Snow', 'Hills', 'River', 'Waterfall', 'Stars', 'Moon', 'Sky']
-			this.searchList = ['Thunderstorm']
+			this.searchList = ['Nature', 'City', 'Rain', 'Sunset', 'Ocean', 'Islands', 'Thunderstorm', 'Snow', 'Hills', 'River', 'Waterfall', 'Stars', 'Moon', 'Sky']
+			// this.searchList = ['Thunderstorm']
 			this.search = this.searchList[Math.floor(Math.random() * this.searchList.length)]
 			this.googleSearch = ''
 			this.inLandscape = window.innerWidth > window.innerHeight
@@ -113,13 +113,13 @@ export default class Desktop extends HTMLElement {
 				})
 					.then(async (res) => {
 						if (res.photos) {
-							// for (let i = 0; i < 5; i++) {
-							// 	let photo = res.photos[Math.floor(Math.random() * res.photos.length)]
-							// 	while (this.backgroundImages.find(image => image.id == photo.id)) {
-							// 		photo = res.photos[Math.floor(Math.random() * res.photos.length)]
-							// 	}
-							// 	this.backgroundImages.push(photo)
-							// }
+							for (let i = 0; i < 5; i++) {
+								let photo = res.photos[Math.floor(Math.random() * res.photos.length)]
+								while (this.backgroundImages.find(image => image.id == photo.id)) {
+									photo = res.photos[Math.floor(Math.random() * res.photos.length)]
+								}
+								this.backgroundImages.push(photo)
+							}
 							this.backgroundImages = res.photos
 							this.setBackgroundImage()
 						}
@@ -138,7 +138,7 @@ export default class Desktop extends HTMLElement {
 				app.style.backgroundSize = "cover"
 				app.style.backgroundPosition = 'center'
 				app.style.backgroundAttachment = 'fixed'
-				// this.backgroundImages.splice(random, 1)
+				this.backgroundImages.splice(random, 1)
 				if (this.backgroundImages.length > 0)
 					localStorage.setItem('webDesktop.backgroundImages', JSON.stringify(this.backgroundImages))
 				else
