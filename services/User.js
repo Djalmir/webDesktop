@@ -1,5 +1,5 @@
-const baseUrl = 'http://192.168.100.100:3333/'
-// const baseUrl = 'https://razion-apis.onrender.com/'
+// const baseUrl = 'http://192.168.100.100:3333/'
+const baseUrl = 'https://razion-apis.onrender.com/'
 const headers = () => {
 	if (!app.user)
 		return
