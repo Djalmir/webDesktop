@@ -4,18 +4,18 @@ style.textContent = /*css*/`
 		position: absolute;
 		display: flex;
 		flex-direction: column;
-		background: var(--gray1);
+		background: var(--dark-bg3);
 		padding: 3px;
 		gap: 3px;
 		border-radius: .3rem;
 		z-index: 6;
-		box-shadow: 0 0 2px var(--white);
+		box-shadow: 0 0 2px var(--light-bg4);
 	}
 
 	button {
 		margin: 0;
-		background: var(--darkgray3);
-		color: var(--gray3);
+		background: var(--dark-bg2);
+		color: var(--light-bg1);
 	}
 
 	@keyframes grow {
@@ -34,7 +34,6 @@ style.textContent = /*css*/`
 `
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
-<!-- enter-animation="grow .2s ease-out" leave-animation="fade .2s linear" -->
 	<nav z-if="showing" enter-animation="grow .2s ease-out" leave-animation="fadeOut .4s ease-in-out">
 	</nav>
 `

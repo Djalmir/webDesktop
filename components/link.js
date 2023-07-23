@@ -13,7 +13,7 @@ style.textContent = /*css*/`
 		user-select: none;
 	}
 
-	#folderDiv {
+	#linkDiv {
 		position: relative;
 		width: 75px;
 		height: fit-content;
@@ -22,20 +22,21 @@ style.textContent = /*css*/`
 		border-radius: .2rem;
 	}
 
-	#folderDiv:hover,
-	#folderDiv:focus {
+	#linkDiv:hover,
+	#linkDiv:focus {
 		background: var(--transparentBg);
 		border: 1px solid var(--dark-bg4);
 	}
 
-	#folderDiv img {
-		width: 75%;
+	#linkDiv img {
+		padding: 7px;
+		width: 48px;
 		-webkit-user-drag: none;
 		user-select: none;
 		filter: drop-shadow(0 0 1px var(--light-bg4));
 	}
 
-	#folderDiv textarea {
+	#linkDiv textarea {
 		width: 100%;
 		height: 28px;
 		background: transparent;
@@ -71,16 +72,16 @@ style.textContent = /*css*/`
 `
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
-	<div id="folderDiv" tabindex="0" z-onmousedown="setMouseDown" z-ontouchstart="setMouseDown" z-onmouseup="handleClick">
-		<img src="assets/folder1.svg">
+	<div id="linkDiv" tabindex="0" z-onmousedown="setMouseDown" z-ontouchstart="setMouseDown" z-onmouseup="handleClick">
+		<img />
 		<textarea z-model="name" tabindex=-1></textarea>
 	</div>
 `
 
 import User from '../services/User.js'
 import Explorer from '../components/explorer.js'
-export default class Folder extends HTMLElement {
-	constructor(_id, parentFolder, name, left, top) {
+export default class Link extends HTMLElement {
+	constructor(_id, parentFolder, name, url, left, top) {
 		super()
 		this.attachShadow({ mode: 'open' })
 		this.shadowRoot.appendChild(style.cloneNode(true))
@@ -95,6 +96,16 @@ export default class Folder extends HTMLElement {
 		this._id = _id || this.getAttribute('_id')
 		this.parentFolder = parentFolder || this.getAttribute('parentFolder')
 		this.name = name || this.getAttribute('name')
+		this.url = url || this.getAttribute('url')
+
+		if (isValidHttpUrl(this.url)) {
+			try {
+				this.shadowRoot.querySelector('img').src = `https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=${ this.url }`
+			}
+			catch (e) {
+				e.preventDefault()
+			}
+		}
 		this.left = left || this.getAttribute('left')
 		this.top = top || this.getAttribute('top')
 		this.clickDiff = { x: 0, y: 0 }
@@ -130,10 +141,7 @@ export default class Folder extends HTMLElement {
 				clearTimeout(dblclickTimer)
 				dblclickTimer = null
 
-				if (this.host.tagName == 'VIEW-DESKTOP')
-					this.rootNode.appendChild(new Explorer(this._id, this.rootNode))
-				else
-					this.host.changeDirectory(this._id)
+				window.open(this.url)
 				this.focused = false
 			}
 			// One Click
@@ -232,9 +240,10 @@ export default class Folder extends HTMLElement {
 						this.hoveringElement = null
 				}
 				loadingLock = true
-				User.editFolder({
+				User.editLink({
 					_id: this._id,
 					name: this.name,
+					url: this.url,
 					left: this.left,
 					top: this.top,
 					parentFolder: this.parentFolder
@@ -256,7 +265,7 @@ export default class Folder extends HTMLElement {
 						this.style.top = 'unset'
 						this.hoveringElement.insertBefore(this, this.hoveringElement.querySelector('[end-z-for]'))
 					}
-					else if (this.hoveringElement._id)
+					else if (this.hoveringElement.tagName == 'APP-FOLDER')
 						this.selfRemove()
 				}
 			}
@@ -292,7 +301,7 @@ export default class Folder extends HTMLElement {
 			const rmSelf = () => {
 				this.shadowRoot.host.removeEventListener('animationend', rmSelf)
 				this.shadowRoot.host.parentElement.removeChild(this)
-				document.dispatchEvent(new CustomEvent('deleteFolder', { detail: this }))
+				document.dispatchEvent(new CustomEvent('deleteLink', { detail: this }))
 			}
 			this.shadowRoot.host.style.animation = 'close .4s ease-in-out'
 			this.shadowRoot.host.addEventListener('animationend', rmSelf)
@@ -304,8 +313,8 @@ export default class Folder extends HTMLElement {
 			let top = e.touches ? e.touches[e.touches.length - 1].clientY : e.clientY
 			let items = [
 				{
-					text: 'Renomear',
-					action: this.rename
+					text: 'Editar',
+					action: this.edit
 				},
 				{
 					text: 'Excluir',
@@ -317,47 +326,50 @@ export default class Folder extends HTMLElement {
 		}
 		this.oncontextmenu = this.showContextMenu
 
-		this.rename = () => {
-			let oldValue = this.textarea.value
-			this.textarea.style.pointerEvents = 'auto'
-			this.textarea.style.cursor = 'text'
-			this.textarea.select()
-
-			const rn = () => {
-				this.textarea.style.pointerEvents = ''
-				this.textarea.style.cursor = ''
-				if (this.textarea.value.trim() != '' && this.textarea.value != oldValue) {
-					User.editFolder({
-						_id: this._id,
-						name: this.textarea.value,
-						left: this.left,
-						top: this.top,
-						parentFolder: this.parentFolder
-					})
+		this.edit = () => {
+			zDialog.prompt('Editar Link', [
+				{
+					prompt: 'Nome',
+					value: this.name
+				},
+				{
+					prompt: 'URL',
+					value: this.url
 				}
-				else {
-					this.textarea.value = oldValue
-				}
-			}
-
-			this.textarea.onblur = () => {
-				rn()
-			}
-
-			this.textarea.onkeydown = (e) => {
-				if (e.key == 'Escape') {
-					this.textarea.value = oldValue
-					this.textarea.blur()
-				}
-				if (e.key == 'Enter' && !e.shiftKey)
-					this.textarea.blur()
-			}
+			])
+				.then((res) => {
+					let link = res
+					if (link['Nome'] && link['URL']) {
+						if (!link['URL'].startsWith('http'))
+							link['URL'] = 'http://' + link['URL']
+						User.editLink({
+							_id: this._id,
+							name: link['Nome'],
+							url: link['URL'],
+							left: this.left,
+							top: this.top,
+							parentFolder: this.parentFolder
+						})
+							.then((res) => {
+								this.name = link['Nome']
+								this.url = link['URL']
+								if (isValidHttpUrl(this.url)) {
+									try {
+										this.shadowRoot.querySelector('img').src = `https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=${ this.url }`
+									}
+									catch (e) {
+										e.preventDefault()
+									}
+								}
+							})
+					}
+				})
 		}
 
 		this.delete = async () => {
-			if (await zDialog.confirm('Por favor, confirme:', `<p style="margin-bottom:7px">Deseja mesmo excluir a pasta <b>${ this.name }</b> e todo seu conteúdo ?</p>
+			if (await zDialog.confirm('Por favor, confirme:', `<p style="margin-bottom:7px">Deseja mesmo excluir o link <b>${ this.name }</b>?</p>
 					<p style="color:var(--danger-light)">Esta ação não poderá ser defeita.</p>`)) {
-				User.deleteFolder(this)
+				User.deleteLink(this)
 					.then((res) => {
 						this.selfRemove()
 					})
@@ -376,4 +388,4 @@ export default class Folder extends HTMLElement {
 	}
 }
 
-customElements.define('app-folder', Folder)
+customElements.define('app-link', Link)

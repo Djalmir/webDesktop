@@ -24,7 +24,7 @@ export default class ErrorMsgs extends HTMLElement {
 
 			.errorMsg {
 				box-sizing: border-box;
-				background: var(--darkgray3);
+				background: var(--dark-bg1);
 				display: flex;
 				align-items: center;
 				gap: 15px;
@@ -32,30 +32,30 @@ export default class ErrorMsgs extends HTMLElement {
 				box-sizing: border-box;
 				transition: .2s;
 				border-radius: .2rem;
-				border-left: 1px solid var(--darkgray4);
-				border-top: 1px solid var(--darkgray4);
-				border-right: 1px solid var(--darkgray2);
-				border-bottom: 1px solid var(--darkgray2);
+				border-left: 1px solid var(--dark-bg3);
+				border-top: 1px solid var(--dark-bg3);
+				border-right: 1px solid var(--dark-bg0);
+				border-bottom: 1px solid var(--dark-bg0);
 			}
 			
 			.errorMsgText {
 				flex: 1;
 				font-weight: bolder;
-				color: var(--red);
+				color: var(--danger-light);
 			}
 			
 			.closeErrorBtn {
 				width: 32px;
 				height: 32px;
 				border-radius: 30%;
-				background: transparent;
+				background: var(--dark-bg2);
 				cursor: pointer;
 				display: flex;
 				align-items: center;
-				border-left: 1px solid var(--darkgray4);
-				border-top: 1px solid var(--darkgray4);
-				border-right: 1px solid var(--darkgray2);
-				border-bottom: 1px solid var(--darkgray2);
+				border-left: 1px solid var(--secondary);
+				border-top: 1px solid var(--secondary);
+				border-right: 1px solid var(--dark-bg0);
+				border-bottom: 1px solid var(--dark-bg0);
 				filter: brightness(.8);
 			}
 
@@ -66,14 +66,14 @@ export default class ErrorMsgs extends HTMLElement {
 
 			.closeErrorBtn:active {
 				filter: brightness(.8);
-				border-left: 1px solid var(--darkgray2);
-				border-top: 1px solid var(--darkgray2);
-				border-right: 1px solid var(--darkgray4);
-				border-bottom: 1px solid var(--darkgray4);
+				border-left: 1px solid var(--dark-bg0);
+				border-top: 1px solid var(--dark-bg0);
+				border-right: 1px solid var(--dark-font2);
+				border-bottom: 1px solid var(--dark-font2);
 			}
 
 			.closeErrorBtn svg {
-				stroke: var(--red);
+				stroke: var(--danger-light);
 				stroke-width: 3;
 				stroke-linecap: round;
 			}

@@ -1,11 +1,10 @@
 import Home from './views/home.js'
 import Desktop from './views/desktop.js'
 
-// import Menu from './components/menu.js'
 import ErrorMsgs from './components/errorMsgs.js'
 import zionLoading from './components/loading.js'
 import ContextMenu from './components/contextMenu.js'
-import Confirm from './components/confirm.js'
+import zDialog from './components/zDialog.js'
 
 const routes = {
 	'#/': Home,
@@ -13,9 +12,9 @@ const routes = {
 }
 
 const components = [
+	//add here the component id you used on html tags (see index.html)
 	appLoading,
-	contextMenu
-	// mainMenu
+	contextMenu // VS code is trying to say that the correct would start with uppercase (ContextMenu). But it isn't. Because the component id starts with lowercase 😉
 ]
 
 let globalStyle
@@ -28,7 +27,7 @@ fetch('./app.css')
 		components.map((component) => {
 			let componentStyle = component.shadowRoot.querySelector('style')
 			if (componentStyle) {
-				componentStyle.textContent = globalStyle + componentStyle.textContent
+				componentStyle.textContent = globalStyle + '\n' + componentStyle.textContent
 			}
 			else {
 				componentStyle = component.shadowRoot.insertBefore(document.createElement('style'), component.shadowRoot.firstElementChild)
@@ -37,7 +36,7 @@ fetch('./app.css')
 			ZION(component)
 		})
 
-		async function onRouteChanged() {
+		function onRouteChanged() {
 			const hash = window.location.hash
 
 			localStorage.setItem('app.lastHash', hash)
@@ -50,7 +49,7 @@ fetch('./app.css')
 
 			let viewStyle = view.shadowRoot.querySelector('style')
 			if (viewStyle) {
-				viewStyle.textContent = globalStyle + viewStyle.textContent
+				viewStyle.textContent = globalStyle + '\n' + viewStyle.textContent
 			}
 			else {
 				viewStyle = view.shadowRoot.insertBefore(document.createElement('style'), view.shadowRoot.firstElementChild)

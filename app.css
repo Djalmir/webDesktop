@@ -3,7 +3,7 @@
 
 :root {
 	--transparentBg: #0000008d;
-	--darkgray1: #101010;
+	/*--darkgray1: #101010;
 	--darkgray2: #161616;
 	--darkgray3: #202020;
 	--darkgray4: #303030;
@@ -21,7 +21,43 @@
 	--green: #77FF77;
 	--yellow: #F5FF67;
 	--orange: #FF954E;
-	--red: #FF5555;
+	--red: #FF5555; */
+
+	--dark-bg0: #161616;
+	--dark-bg1: #1b1b1b;
+	--dark-bg2: #242424;
+	--dark-bg3: #3f3f3f;
+	--dark-bg4: #6b6b6b;
+
+	--light-bg1: #bdbdbd;
+	--light-bg2: #dddddd;
+	--light-bg3: #ededed;
+	--light-bg4: #fefefe;
+
+	--dark-font1: #1a1a1a;
+	--dark-font2: #333333;
+
+	--light-font1: #dddddd;
+	--light-font2: #fdfdfd;
+
+	--primary: #0059ff;
+	--primary-light: #4385ff;
+
+	--secondary: #4e4e57;
+	--secondary-light: #a5a5b3;
+
+	--danger: #be0000;
+	--danger-light: #ff5757;
+
+	--success: #00921d;
+	--success-light: #25e94c;
+
+	--box-shadow: 1px 1px 2px #000000d0;
+
+	--scroll-track-bg: #191919;
+	--scroll-thumb-bg: #393939;
+	--scroll-thumb-hover-bg: #454545;
+	--scroll-thumb-active-bg: #303030;
 }
 
 * {
@@ -39,52 +75,56 @@
 
 ::-webkit-scrollbar {
 	background: transparent;
-	width: 8px;
-	height: 4px;
+	width: 7px;
+	height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-	background: var(--darkgray1);
+	background-color: var(--scroll-track-bg);
+
 }
 
 ::-webkit-scrollbar-thumb {
-	background: var(--gray1);
-	box-shadow: inset 0px 0px 5px #00000080;
-}
-
-::-webkit-scrollbar-corner {
-	background-color: var(--darkgray1);
+	background: var(--scroll-thumb-bg);
+	border-radius: 7px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: var(--darkblue2);
+	background: var(--scroll-thumb-hover-bg);
 }
 
 ::-webkit-scrollbar-thumb:active {
-	background: var(--darkblue1)
+	background: var(--scroll-thumb-active-bg);
+	box-shadow: inset 1px 1px 1px var(--dark-bg1);
+}
+
+::-webkit-scrollbar-corner {
+	background: transparent;
 }
 
 ::selection {
-	background: var(--darkblue2);
-	color: var(--white);
-	text-shadow: none;
-}
-
-:-webkit-autofill,
-:-webkit-autofill:hover,
-:-webkit-autofill:focus {
-	-webkit-box-shadow: inset 0 0 5px var(--darkgray4), inset 0 0 0 1000px var(--gray2) !important;
-	box-shadow: inset 0 0 5px var(--darkgray4), inset 0 0 0 1000px var(--gray2) !important;
-	-webkit-text-fill-color: var(--gray4);
+	background: var(--dark-bg2);
+	color: var(--primary-light);
 }
 
 body {
-	background: var(--darkgray3);
-	color: var(--gray4);
+	background: var(--dark-bg2);
+	color: var(--light-font1);
+	padding: 27px 0 52px;
 	font-size: 16px;
-	overflow-x: hidden;
+	transition: background .4s;
+	position: relative;
 	max-width: 100%;
 	min-height: 100vh;
+}
+
+#app {
+	position: absolute;
+	inset: 0;
+	background-color: var(--dark-bg2);
+	color: var(--light-font1);
+	font-size: 16px;
+	overflow-x: hidden;
 }
 
 h1,
@@ -101,6 +141,7 @@ button {
 	filter: brightness(.8);
 	margin: 13px 0;
 	transition: .1s;
+	box-shadow: var(--box-shadow);
 }
 
 button:hover,
@@ -110,33 +151,27 @@ button:focus {
 
 button:active {
 	filter: brightness(.8);
-	transform: scale(.98);
-}
-
-.blueBt {
-	background: var(--blue);
-	color: var(--darkgray4);
-}
-
-.redBt {
-	background: var(--red);
-	color: var(--white);
+	box-shadow: inset 2px 2px 4px #000000d0;
 }
 
 a {
-	color: var(--white);
+	color: var(--light-font2);
 }
 
 a:hover,
 a:focus {
-	color: var(--blue)
+	color: var(--primary-light);
 }
 
 a:active {
-	color: var(--darkblue2);
+	color: var(--primary);
 }
 
-.inputWrapper {
+z-input {
+	margin: 13px 0 7px;
+}
+
+/* .inputWrapper {
 	position: relative;
 	width: 100%;
 	margin: 13px 0 7px;
@@ -165,16 +200,17 @@ a:active {
 	opacity: 0;
 }
 
-.inputWrapper input:not(:placeholder-shown) {
+.inputWrapper input:focus {
 	box-shadow: inset 0 0 5px var(--darkgray4);
 }
 
-.inputWrapper input:placeholder-shown~b {
+.inputWrapper input:placeholder-shown:not(:focus)~b {
 	top: 50%;
 	left: 7px;
 	background: transparent;
 	border: none;
 	font-size: 1em;
+	cursor: text;
 }
 
 .inputWrapper input {
@@ -185,7 +221,7 @@ a:active {
 	padding: 8px 7px;
 	color: var(--gray4);
 	transition: .1s;
-}
+} */
 
 @keyframes fadeIn {
 	from {

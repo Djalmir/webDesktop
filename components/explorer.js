@@ -8,9 +8,9 @@ style.textContent = /*css*/`
 		height: 60%;
 		min-width: 280px;
 		min-height: 160px;
-		background: var(--darkgray3);
+		background: var(--dark-bg2);
 		border-radius: .3rem;
-		box-shadow: 0 0 1px var(--white);
+		box-shadow: 0 0 1px var(--light-bg4);
 		overflow: hidden;
 		resize: both;
 		z-index: 2;
@@ -22,7 +22,7 @@ style.textContent = /*css*/`
 	}
 
 	header {
-		background: var(--darkgray4);
+		background: var(--dark-bg3);
 		padding: 3px 7px;
 		display: flex;
 		justify-content: space-between;
@@ -96,21 +96,21 @@ style.textContent = /*css*/`
 
 	aside details summary:hover,
 	aside details summary:focus {
-		background: var(--darkgray2);
+		background: var(--dark-bg0);
 	}
 	
 	
 	aside details summary.active {
-		color: var(--blue);
-		background: var(--darkgray2);
+		color: var(--light-font2);
+		background: var(--dark-bg0);
 	}
 	
 	aside details summary::marker {
-		color: var(--gray2);
+		color: var(--dark-bg4);
 	}
 
 	aside details summary.active::marker {
-		color: var(--darkblue2);
+		color: var(--light-bg3);
 	}
 
 	aside #asideResizer {
@@ -119,12 +119,12 @@ style.textContent = /*css*/`
 		right: 0;
 		width: 7px;
 		height: 100%;
-		background: var(--darkgray2);
+		background: var(--dark-bg0);
 	}
 
 	section {
 		flex: 1;
-		background: var(--darkgray2);
+		background: var(--dark-bg0);
 		overflow-y: auto;
 		padding: 13px;
 		display: grid;
@@ -162,7 +162,7 @@ template.innerHTML = /*html*/`
 					<img src="./assets/restore.svg" z-if="maximized">
 					<img src="./assets/maximize.svg" z-else>
 				</button>
-				<button class="redBt" z-onclick="close">
+				<button style="background: var(--danger-light)" z-onclick="close">
 					<img src="./assets/close.svg">
 				</button>
 			</div>
@@ -183,6 +183,9 @@ template.innerHTML = /*html*/`
 				<fragment z-for="folder in folders">
 					<app-folder z-if="folder.parentFolder" _id="{{folder._id}}" parentFolder="{{folder.parentFolder}}" name="{{folder.name}}" left="{{folder.left}}" top="{{folder.top}}"></app-folder>
 				</fragment>
+				<fragment z-for="link in links">
+					<app-link z-if="link.parentFolder" _id="{{link._id}}" parentFolder="desktop" name="{{link.name}}" url="{{link.url}}" left="{{link.left}}" top="{{link.top}}"></app-link>
+				</fragment>
 			</section>
 		</div>
 	</div>
@@ -192,9 +195,9 @@ import User from '../services/User.js'
 export default class Explorer extends HTMLElement {
 	constructor(directory, desktop) {
 		super()
-		this.attachShadow({mode: 'open'})
+		this.attachShadow({ mode: 'open' })
 		fetch('./app.css')
-			.then((res) => {return res.text()})
+			.then((res) => { return res.text() })
 			.then((res) => {
 				style.textContent = res + style.textContent
 
@@ -217,15 +220,17 @@ export default class Explorer extends HTMLElement {
 				this.name = ''
 				this.desktopFolders = [{}]
 				this.folders = [{}]
+				this.links = [{}]
 
-				this.clickDiff = {x: 0, y: 0}
+				this.clickDiff = { x: 0, y: 0 }
 				this.mouseDown = null
 				this.dragging = false
 
 				loadingLock = true
-				User.getFolders('desktop')
+				User.listDirectory('desktop')
 					.then((res) => {
 						this.desktopFolders = res.folders.length ? res.folders : [{}]
+						this.links = res.links.length ? res.links : [{}]
 						loadingLock = false
 					})
 
@@ -306,11 +311,12 @@ export default class Explorer extends HTMLElement {
 					let dir = directory.replace('folder_', '')
 					if (dir != this.directory) {
 						loadingLock = true
-						User.getFolders(dir)
+						User.listDirectory(dir)
 							.then((res) => {
 								this.directory = dir
 								this.name = res.folder.name
 								this.folders = res.folders.length ? res.folders : [{}]
+								this.links = res.links.length ? res.links : [{}]
 
 								if (dir != 'desktop') {
 									let asideMenu = this.aside.querySelector(`#details_${ dir }`)
@@ -397,8 +403,8 @@ export default class Explorer extends HTMLElement {
 				this.changeDirectory(directory)
 
 				this.asideResizer.style.cursor = 'ew-resize'
-				this.asideResizer.onmousedown = () => {this.addEventListener('mousemove', this.resizeAside)}
-				this.asideResizer.ontouchstart = () => {this.addEventListener('touchmove', this.resizeAside)}
+				this.asideResizer.onmousedown = () => { this.addEventListener('mousemove', this.resizeAside) }
+				this.asideResizer.ontouchstart = () => { this.addEventListener('touchmove', this.resizeAside) }
 
 				this.resizeAside = (e) => {
 					this.aside.style.width = (e.touches ? e.touches[e.touches.length - 1].clientX : e.clientX) - this.screen.offsetLeft + 'px'

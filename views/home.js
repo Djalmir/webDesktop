@@ -33,10 +33,10 @@ style.textContent = /*css*/`
 	}
 
 	form {
-		background: var(--darkgray4);
+		background: var(--dark-bg3);
 		padding: 13px;
 		border-radius: .5rem;
-		box-shadow: 0 0 5px var(--darkgray2);
+		box-shadow: var(--box-shadow);
 		width: 100%;
 		margin: 0;
 		display: flex;
@@ -89,15 +89,9 @@ template.innerHTML = /*html*/`
 		</div>
 		<div>
 			<form id="loginForm" action="javascript:void(0)" z-onsubmit="login">
-				<label class="inputWrapper">
-					<input type="email" placeholder="#" id="loginEmailInput" z-model="user.email" onfocus="removeErrMsg('email')" autocomplete="email">
-					<b>E-mail</b>
-				</label>
-				<label class="inputWrapper">
-					<input type="password" placeholder="#" z-model="user.password" onfocus="removeErrMsg('password')" autocomplete="password">
-					<b>Senha</b>
-				</label>
-				<button type="submit" class="blueBt">Entrar</button>
+				<z-input id="loginEmailInput" type="email" placeholder="E-mail" class="light-bg2" z-model="user.email" z-onfocus="removeErrMsg('email')" autocomplete="email"></z-input>
+				<z-input type="password" placeholder="Senha" class="light-bg2" z-model="user.password" z-onfocus="removeErrMsg('password')" autocomplete="password"></z-input>
+				<z-button type="submit" class="primary" style="width: 100%;">Entrar</z-button>
 			</form>
 			<p>
 				Ainda não tem um cadastro?<br/>
@@ -115,23 +109,11 @@ template.innerHTML = /*html*/`
 		</div>
 		<div>
 			<form id="signupForm" action="javascript:void(0)" z-onsubmit="signup">
-				<label class="inputWrapper">
-					<input type="text" placeholder="Nome" z-model="user.name" onfocus="removeErrMsg('name')" autocomplete="name">
-					<b>Nome</b>
-				</label>	
-				<label class="inputWrapper">
-					<input type="email" id="signupEmailInput" placeholder="E-mail" z-model="user.email" onfocus="removeErrMsg('email')" autocomplete="email">
-					<b>E-mail</b>
-				</label>
-				<label class="inputWrapper">
-					<input type="password" placeholder="Senha" z-model="user.password" onfocus="removeErrMsg('password')" autocomplete="password">
-					<b>Senha</b>
-				</label>
-				<label class="inputWrapper">
-					<input type="password" placeholder="Confirme a senha" z-model="user.confirmPassword" onfocus="removeErrMsg('confirmPassword')" autocomplete="password-confirmation">
-					<b>Confirme a senha</b>
-				</label>
-				<button type="submit" class="blueBt">Cadastrar</button>
+				<z-input placeholder="Nome" class="light-bg2" z-model="user.name" z-onfocus="removeErrMsg('name')" autocomplete="name"></z-input>
+				<z-input type="email" id="signupEmailInput" placeholder="E-mail" class="light-bg2" z-model="user.email" z-onfocus="removeErrMsg('email')" autocomplete="email"></z-input>
+				<z-input type="password" placeholder="Senha" class="light-bg2" z-model="user.password" z-onfocus="removeErrMsg('password')" autocomplete="password"></z-input>
+				<z-input type="password" placeholder="Confirme a senha" class="light-bg2" z-model="user.confirmPassword" z-onfocus="removeErrMsg('confirmPassword')" autocomplete="password-confirmation"></z-input>
+				<z-button type="submit" class="primary" style="width: 100%;">Cadastrar</z-button>
 			</form>
 			<p>
 				Já tem um cadastro?<br/>
@@ -141,11 +123,13 @@ template.innerHTML = /*html*/`
 	</div>
 `
 
+import User from '../services/User.js'
+import 'https://cdn.jsdelivr.net/gh/Djalmir/zionComponents@0.1.4/zionComponents.js'
 export default class Home extends HTMLElement {
 	constructor() {
 		super()
-		this.attachShadow({mode: 'open'})
-		document.body.style.background = 'var(--darkgray3)'
+		this.attachShadow({ mode: 'open' })
+		app.style.background = 'var(--dark-bg2)'
 		this.shadowRoot.appendChild(style.cloneNode(true))
 		this.shadowRoot.appendChild(template.content.cloneNode(true))
 
@@ -169,16 +153,17 @@ export default class Home extends HTMLElement {
 			}
 			else {
 				if (this.user.password.trim() == '') {
-					errorMsg.show({field: 'password', message: 'Digite sua senha'})
+					errorMsg.show({ field: 'password', message: 'Digite sua senha' })
 				}
 				if (this.user.email.trim() == '') {
-					errorMsg.show({field: 'email', message: 'Informe seu email'})
+					errorMsg.show({ field: 'email', message: 'Informe seu email' })
 				}
 				if (!this.shadowRoot.querySelector('#loginEmailInput').checkValidity()) {
-					errorMsg.show({field: 'email', message: 'Email inválido'})
+					errorMsg.show({ field: 'email', message: 'Email inválido' })
 				}
 				if (!errorMsg.getMessages().length) {
-					zPost('https://razion-apis.herokuapp.com/session/login', {
+					// zPost('https://razion-apis.herokuapp.com/session/login', {
+					User.login({
 						email: this.user.email,
 						password: this.user.password
 					})
@@ -190,7 +175,7 @@ export default class Home extends HTMLElement {
 						})
 						.catch((err) => {
 							// console.error('err', err)
-							errorMsg.show({field: err.field, message: err.error})
+							errorMsg.show({ field: err.field, message: err.error })
 						})
 				}
 			}
@@ -202,19 +187,20 @@ export default class Home extends HTMLElement {
 			}
 			else {
 				if (this.user.password != this.user.confirmPassword)
-					errorMsg.show({field: 'confirmPassword', message: 'As senhas não coincidem'})
+					errorMsg.show({ field: 'confirmPassword', message: 'As senhas não coincidem' })
 				if (this.user.confirmPassword.trim() == '')
-					errorMsg.show({field: 'confirmPassword', message: 'Confirme sua senha'})
+					errorMsg.show({ field: 'confirmPassword', message: 'Confirme sua senha' })
 				if (this.user.password.trim() == '')
-					errorMsg.show({field: 'password', message: 'Digite sua senha'})
+					errorMsg.show({ field: 'password', message: 'Digite sua senha' })
 				if (this.user.email.trim() == '')
-					errorMsg.show({field: 'email', message: 'Informe seu email'})
+					errorMsg.show({ field: 'email', message: 'Informe seu email' })
 				if (!this.shadowRoot.querySelector('#signupEmailInput').checkValidity())
-					errorMsg.show({field: 'email', message: 'Email inválido'})
+					errorMsg.show({ field: 'email', message: 'Email inválido' })
 				if (this.user.name.trim() == '')
-					errorMsg.show({field: 'name', message: 'Informe seu nome'})
+					errorMsg.show({ field: 'name', message: 'Informe seu nome' })
 				if (!errorMsg.getMessages().length) {
-					zPost('https://razion-apis.herokuapp.com/session/signup', {
+					// zPost('https://razion-apis.herokuapp.com/session/signup', {
+					User.signup({
 						name: this.user.name,
 						email: this.user.email,
 						password: this.user.password
@@ -225,7 +211,7 @@ export default class Home extends HTMLElement {
 						})
 						.catch((err) => {
 							// console.error('err', err)
-							errorMsg.show({field: err.field, message: err.error})
+							errorMsg.show({ field: err.field, message: err.error })
 						})
 				}
 			}
