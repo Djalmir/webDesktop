@@ -240,6 +240,7 @@ export default class Folder extends HTMLElement {
 					parentFolder: this.parentFolder
 				})
 					.finally(() => {
+						document.dispatchEvent(new CustomEvent('updateFolder', { detail: this }))
 						loadingLock = false
 					})
 
@@ -335,6 +336,9 @@ export default class Folder extends HTMLElement {
 						top: this.top,
 						parentFolder: this.parentFolder
 					})
+						.then(() => {
+							document.dispatchEvent(new CustomEvent('updateFolder', { detail: this }))
+						})
 				}
 				else {
 					this.textarea.value = oldValue

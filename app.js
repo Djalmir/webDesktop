@@ -20,7 +20,7 @@ const components = [
 let globalStyle
 
 fetch('./app.css')
-	.then((res) => {return res.text()})
+	.then((res) => { return res.text() })
 	.then((res) => {
 		globalStyle = res
 
@@ -47,21 +47,23 @@ fetch('./app.css')
 
 			const view = new routes[hash.split('?')[0]]()
 
-			let viewStyle = view.shadowRoot.querySelector('style')
-			if (viewStyle) {
-				viewStyle.textContent = globalStyle + '\n' + viewStyle.textContent
-			}
-			else {
-				viewStyle = view.shadowRoot.insertBefore(document.createElement('style'), view.shadowRoot.firstElementChild)
-				viewStyle.textContent = globalStyle
-			}
+			if (view.shadowRoot) {
+				let viewStyle = view.shadowRoot.querySelector('style')
+				if (viewStyle) {
+					viewStyle.textContent = globalStyle + '\n' + viewStyle.textContent
+				}
+				else {
+					viewStyle = view.shadowRoot.insertBefore(document.createElement('style'), view.shadowRoot.firstElementChild)
+					viewStyle.textContent = globalStyle
+				}
 
-			while (app.firstChild)
-				app.removeChild(app.firstChild)
-			app.appendChild(view)
-			app.view = view
+				while (app.firstChild)
+					app.removeChild(app.firstChild)
+				app.appendChild(view)
+				app.view = view
 
-			ZION(app.firstElementChild)
+				ZION(app.firstElementChild)
+			}
 		}
 
 		if (!window.location.hash)

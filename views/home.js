@@ -217,6 +217,13 @@ export default class Home extends HTMLElement {
 			}
 		}
 	}
+
+	connectedCallback() {
+		if (localStorage.getItem('Razion.user')) {
+			app.user = JSON.parse(localStorage.getItem('Razion.user'))
+			location.hash = '#/desktop'
+		}
+	}
 }
 
 customElements.define('view-home', Home)

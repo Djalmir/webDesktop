@@ -248,6 +248,7 @@ export default class Link extends HTMLElement {
 					parentFolder: this.parentFolder
 				})
 					.finally(() => {
+						document.dispatchEvent(new CustomEvent('updateLink', { detail: this }))
 						loadingLock = false
 					})
 
@@ -361,6 +362,7 @@ export default class Link extends HTMLElement {
 										e.preventDefault()
 									}
 								}
+								document.dispatchEvent(new CustomEvent('updateLink', { detail: this }))
 							})
 					}
 				})

@@ -49,7 +49,6 @@ style.textContent = /*css*/`
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
 	<div id="desktop" z-onclick="rmFolderFocus">
-		
 		<z-input type="search" id="googleSearchInput" class="dark-bg2" placeholder="Pesquisa Google" z-model="googleSearch" z-onkeydown="submitGoogleSearch"></z-input>
 	
 		<fragment z-for="folder in folders">
@@ -60,7 +59,9 @@ template.innerHTML = /*html*/`
 			<app-link z-if="link.parentFolder" _id="{{link._id}}" parentFolder="desktop" name="{{link.name}}" url="{{link.url}}" left="{{link.left}}" top="{{link.top}}"></app-link>
 		</fragment>
 
-		<p id="pexelsLinks"><a id="photoLink" target="_blank">Foto</a> de <a id="photographerLink" target="_blank"><span id="photographerName"></span></a> no <a href="https://pexels.com" target="_blank">Pexels</a>.</p>
+		<p id="pexelsLinks">
+			<a id="photoLink" target="_blank">Foto</a> de <a id="photographerLink" target="_blank"><span id="photographerName"></span></a> no <a href="https://pexels.com" target="_blank">Pexels</a>.
+		</p>
 	</div>
 `
 
@@ -155,8 +156,16 @@ export default class Desktop extends HTMLElement {
 				this.folders = this.folders.filter(f => f._id != e.detail._id)
 			})
 
+			document.addEventListener('updateFolder', (e) => {
+				this.folders[this.folders.indexOf(this.folders.find(f => f._id == e.detail._id))] = e.detail
+			})
+
 			document.addEventListener('deleteLink', (e) => {
 				this.links = this.links.filter(l => l._id != e.detail._id)
+			})
+
+			document.addEventListener('updateLink', (e) => {
+				this.links[this.links.indexOf(this.links.find(l => l._id == e.detail._id))] = e.detail
 			})
 
 			this.rmFolderFocus = (e) => {
