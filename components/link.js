@@ -223,7 +223,6 @@ export default class Link extends HTMLElement {
 
 		this.drop = (e) => {
 			this.mouseDown = null
-			this.clearHovereds()
 			if (this.dragging) {
 				if (this.hoveringElement) {
 					if (this.hoveringElement.id == 'desktop') {
@@ -258,7 +257,7 @@ export default class Link extends HTMLElement {
 
 				if (this.hoveringElement) {
 					if (this.hoveringElement.id == 'desktop')
-						this.hoveringElement.appendChild(this)
+					this.hoveringElement.insertBefore(this, this.hoveringElement.querySelector("[z-for='link in links'][end-z-for]"))
 					else if (this.hoveringElement.id == 'section') {
 						this.shadowRoot.host.style.position = 'relative'
 						this.style.left = 'unset'
@@ -268,6 +267,7 @@ export default class Link extends HTMLElement {
 					else if (this.hoveringElement.tagName == 'APP-FOLDER')
 						this.selfRemove()
 				}
+				this.clearHovereds()
 			}
 
 			app.removeEventListener('mousemove', this.drag)

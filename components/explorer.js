@@ -123,6 +123,7 @@ style.textContent = /*css*/`
 	}
 
 	section {
+		position: relative;
 		flex: 1;
 		background: var(--dark-bg0);
 		overflow-y: auto;
@@ -131,6 +132,24 @@ style.textContent = /*css*/`
 		grid-template-columns: repeat(auto-fit,75px);
 		grid-template-rows: repeat(auto-fit, 100px);
 		gap: 7px;
+	}
+
+	.partialLoading {
+		position: absolute;
+		inset: 0;
+		background: #08080888;
+		/*display: none;*/
+		z-index: 1;
+	}
+
+	.partialLoading img {
+		width: 3em;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		user-select: none;
+		-webkit-user-drag: none;
 	}
 
 	@keyframes open {
@@ -151,7 +170,7 @@ style.textContent = /*css*/`
 `
 const template = document.createElement('template')
 template.innerHTML = /*html*/`
-	<div id="screen" class="draggable widget">
+	<div id="screen" class="draggable widget" z-onmousedown="bringToFront" z-ontouchstart="bringToFront">
 		<header id="header" z-onmousedown="setMouseDown" z-ontouchstart="setMouseDown" z-onmouseup="handleClick('header')">
 			<b z-model="name"></b>
 			<div id="headerBtnsDiv">
@@ -187,6 +206,9 @@ template.innerHTML = /*html*/`
 					<app-link z-if="link.parentFolder" _id="{{link._id}}" parentFolder="desktop" name="{{link.name}}" url="{{link.url}}" left="{{link.left}}" top="{{link.top}}"></app-link>
 				</fragment>
 			</section>
+			<div class="partialLoading" z-if="loadingDirectory" enter-animation="fadeIn .2s linear" leave-animation="fadeOut .2s linear">
+				<img src="./assets/loading.svg">
+			</div>
 		</div>
 	</div>
 `
@@ -216,6 +238,7 @@ export default class Explorer extends HTMLElement {
 				this.screen.style.animation = 'open .4s ease-out'
 
 				this.directory = null
+				this.loadingDirectory = true
 
 				this.name = ''
 				this.desktopFolders = [{}]
@@ -227,10 +250,20 @@ export default class Explorer extends HTMLElement {
 				this.dragging = false
 
 				loadingLock = true
+
 				User.listDirectory('desktop')
 					.then((res) => {
 						this.desktopFolders = res.folders.length ? res.folders : [{}]
-						this.links = res.links.length ? res.links : [{}]
+						if (directory == 'desktop') {
+							this.folders = res.folders.length ? res.folders : [{}]
+							this.links = res.links.length ? res.links : [{}]
+							this.name = 'Desktop'
+							this.loadingDirectory = false
+						}
+						else {
+							this.changeDirectory(directory)
+						}
+
 						loadingLock = false
 					})
 
@@ -249,6 +282,13 @@ export default class Explorer extends HTMLElement {
 					dblclickTimer = setTimeout(() => {
 						dblclickTimer = null
 					}, 350)
+				}
+
+				this.bringToFront = () => {
+					if (this.shadowRoot.host.parentElement.lastChild != this.shadowRoot.host) {
+						this.screen.style.animation = ''
+						this.shadowRoot.host.parentElement.appendChild(this.shadowRoot.host)
+					}
 				}
 
 				this.setMouseDown = (e) => {
@@ -310,7 +350,11 @@ export default class Explorer extends HTMLElement {
 				this.changeDirectory = (directory) => {
 					let dir = directory.replace('folder_', '')
 					if (dir != this.directory) {
+						this.folders = [{}]
+						this.links = [{}]
 						loadingLock = true
+						if (!this.loadingDirectory)
+							this.loadingDirectory = true
 						User.listDirectory(dir)
 							.then((res) => {
 								this.directory = dir
@@ -347,9 +391,8 @@ export default class Explorer extends HTMLElement {
 										d.querySelector('summary').classList.remove('active')
 									}
 								})
-							})
-							.finally(() => {
 								loadingLock = false
+								this.loadingDirectory = false
 							})
 					}
 				}
@@ -399,8 +442,6 @@ export default class Explorer extends HTMLElement {
 						})
 					}
 				}
-
-				this.changeDirectory(directory)
 
 				this.asideResizer.style.cursor = 'ew-resize'
 				this.asideResizer.onmousedown = () => { this.addEventListener('mousemove', this.resizeAside) }

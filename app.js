@@ -59,6 +59,7 @@ fetch('./app.css')
 			while (app.firstChild)
 				app.removeChild(app.firstChild)
 			app.appendChild(view)
+			app.view = view
 
 			ZION(app.firstElementChild)
 		}

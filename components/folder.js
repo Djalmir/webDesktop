@@ -130,8 +130,9 @@ export default class Folder extends HTMLElement {
 				clearTimeout(dblclickTimer)
 				dblclickTimer = null
 
-				if (this.host.tagName == 'VIEW-DESKTOP')
-					this.rootNode.appendChild(new Explorer(this._id, this.rootNode))
+				if (this.host.tagName == 'VIEW-DESKTOP') {
+					this.rootNode.querySelector('#desktop').appendChild(new Explorer(this._id, this.rootNode.querySelector('#desktop')))
+				}
 				else
 					this.host.changeDirectory(this._id)
 				this.focused = false
@@ -215,7 +216,6 @@ export default class Folder extends HTMLElement {
 
 		this.drop = (e) => {
 			this.mouseDown = null
-			this.clearHovereds()
 			if (this.dragging) {
 				if (this.hoveringElement) {
 					if (this.hoveringElement.id == 'desktop') {
@@ -223,9 +223,9 @@ export default class Folder extends HTMLElement {
 						this.left = this.style.left.replace('px', '')
 						this.top = this.style.top.replace('px', '')
 					}
-					else if (this.hoveringElement.id == 'section')
+					else if (this.hoveringElement.id == 'section' && this.hoveringElement.getRootNode().host.directory != this._id)
 						this.parentFolder = this.hoveringElement.getRootNode().host.directory
-					else if (this.hoveringElement.tagName == 'APP-FOLDER') {
+					else if (this.hoveringElement.tagName == 'APP-FOLDER' && this.hoveringElement._id != this._id) {
 						this.parentFolder = this.hoveringElement._id
 					}
 					else
@@ -249,16 +249,17 @@ export default class Folder extends HTMLElement {
 
 				if (this.hoveringElement) {
 					if (this.hoveringElement.id == 'desktop')
-						this.hoveringElement.appendChild(this)
-					else if (this.hoveringElement.id == 'section') {
+						this.hoveringElement.insertBefore(this, this.hoveringElement.querySelector("[z-for='folder in folders'][end-z-for]"))
+					if (this.hoveringElement.id == 'section') {
 						this.shadowRoot.host.style.position = 'relative'
 						this.style.left = 'unset'
 						this.style.top = 'unset'
 						this.hoveringElement.insertBefore(this, this.hoveringElement.querySelector('[end-z-for]'))
 					}
-					else if (this.hoveringElement._id)
+					else if (this.hoveringElement._id && this.hoveringElement._id != this._id)
 						this.selfRemove()
 				}
+				this.clearHovereds()
 			}
 
 			app.removeEventListener('mousemove', this.drag)
