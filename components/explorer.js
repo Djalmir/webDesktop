@@ -432,6 +432,35 @@ export default class Explorer extends HTMLElement {
 					this.screen.addEventListener('animationend', rmThis)
 				}
 
+				document.addEventListener('addFolder', (e) => {
+					let parentInTree = this.shadowRoot.querySelector(`details[id='details_${ e.detail.parentFolder }']`)
+					if (parentInTree) {
+						parentInTree.open = 'true'
+						let det = parentInTree.appendChild(document.createElement('details'))
+						det.id = `details_${ e.detail._id }`
+						let sum = det.appendChild(document.createElement('summary'))
+						sum.textContent = e.detail.name
+						sum.onclick = () => this.changeDirectory(e.detail._id)
+					}
+				})
+
+				document.addEventListener('deleteFolder', (e) => {
+					let folderInTree = this.shadowRoot.querySelector(`details[id='details_${ e.detail._id }']`)
+					folderInTree?.parentElement.removeChild(folderInTree)
+				})
+
+				document.addEventListener('updateFolder', (e) => {
+					// this.folders[this.folders.indexOf(this.folders.find(f => f._id == e.detail._id))] = e.detail
+				})
+
+				document.addEventListener('deleteLink', (e) => {
+					// this.links = this.links.filter(l => l._id != e.detail._id)
+				})
+
+				document.addEventListener('updateLink', (e) => {
+					// this.links[this.links.indexOf(this.links.find(l => l._id == e.detail._id))] = e.detail
+				})
+
 				this.rmFolderFocus = (e) => {
 					let mx = e.touches ? e.touches[e.touches.length - 1].clientX : e.clientX
 					let my = e.touches ? e.touches[e.touches.length - 1].clientY : e.clientY

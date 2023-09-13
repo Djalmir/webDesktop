@@ -152,6 +152,11 @@ export default class Desktop extends HTMLElement {
 				}
 			}
 
+			document.addEventListener('addFolder', (e) => {
+				if (e.detail.parentFolder == 'desktop')
+					this.folders = [...this.folders, e.detail]
+			})
+
 			document.addEventListener('deleteFolder', (e) => {
 				this.folders = this.folders.filter(f => f._id != e.detail._id)
 			})

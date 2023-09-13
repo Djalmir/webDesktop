@@ -130,11 +130,11 @@ export default class Folder extends HTMLElement {
 				clearTimeout(dblclickTimer)
 				dblclickTimer = null
 
-				if (this.host.tagName == 'VIEW-DESKTOP') {
+				if (this.getRootNode().host.tagName == 'VIEW-DESKTOP') {
 					this.rootNode.querySelector('#desktop').appendChild(new Explorer(this._id, this.rootNode.querySelector('#desktop')))
 				}
 				else
-					this.host.changeDirectory(this._id)
+					this.getRootNode().host.changeDirectory(this._id)
 				this.focused = false
 			}
 			// One Click
@@ -185,7 +185,8 @@ export default class Folder extends HTMLElement {
 				this.style.top = my - this.clickDiff.y + 'px'
 
 				this.checkCollisions()
-				this.hoveringElement = this.rootNode.elementsFromPoint(mx, my).filter(e => e !== this.shadowRoot.host)[0]
+				this.elementsFromPoint = app.view.shadowRoot.elementsFromPoint(mx, my).filter(e => e !== this.shadowRoot.host)
+				this.hoveringElement = this.elementsFromPoint[0]
 
 				if (this.hoveringElement.tagName == 'APP-FOLDER')
 					this.hoveringElement.shadowRoot.querySelector('#folderDiv').classList.add('hovered')
@@ -202,9 +203,9 @@ export default class Folder extends HTMLElement {
 
 					if (difX > 20 || difY > 20) {
 						this.dragging = true
-						if (this.host.tagName != 'VIEW-DESKTOP') {
-							this.shadowRoot.host.style.position = 'absolute'
-						}
+						// if (this.host.tagName != 'VIEW-DESKTOP') {
+						this.shadowRoot.host.style.position = 'absolute'
+						// }
 						this.style.left = mx - this.clickDiff.x + 'px'
 						this.style.top = my - this.clickDiff.y + 'px'
 
@@ -223,8 +224,9 @@ export default class Folder extends HTMLElement {
 						this.left = this.style.left.replace('px', '')
 						this.top = this.style.top.replace('px', '')
 					}
-					else if (this.hoveringElement.id == 'section' && this.hoveringElement.getRootNode().host.directory != this._id)
-						this.parentFolder = this.hoveringElement.getRootNode().host.directory
+					else if (this.hoveringElement.tagName == 'ZION-EXPLORER' && this.hoveringElement.directory != this._id) {
+						this.parentFolder = this.hoveringElement.directory
+					}
 					else if (this.hoveringElement.tagName == 'APP-FOLDER' && this.hoveringElement._id != this._id) {
 						this.parentFolder = this.hoveringElement._id
 					}
@@ -249,13 +251,19 @@ export default class Folder extends HTMLElement {
 				this.focused = false
 
 				if (this.hoveringElement) {
-					if (this.hoveringElement.id == 'desktop')
+					if (this.hoveringElement.tagName != 'APP-LINK')
+						document.dispatchEvent(new CustomEvent('deleteFolder', { detail: this }))
+					if (this.hoveringElement.id == 'desktop') {
+						this.shadowRoot.host.style.position = 'absolute'
 						this.hoveringElement.insertBefore(this, this.hoveringElement.querySelector("[z-for='folder in folders'][end-z-for]"))
-					if (this.hoveringElement.id == 'section') {
+						document.dispatchEvent(new CustomEvent('addFolder', { detail: this }))
+					}
+					if (this.hoveringElement.tagName == 'ZION-EXPLORER') {
 						this.shadowRoot.host.style.position = 'relative'
 						this.style.left = 'unset'
 						this.style.top = 'unset'
-						this.hoveringElement.insertBefore(this, this.hoveringElement.querySelector('[end-z-for]'))
+						this.hoveringElement.shadowRoot.querySelector('section').insertBefore(this, this.hoveringElement.shadowRoot.querySelector("section [z-for='folder in folders'][end-z-for]"))
+						document.dispatchEvent(new CustomEvent('addFolder', { detail: this }))
 					}
 					else if (this.hoveringElement._id && this.hoveringElement._id != this._id)
 						this.selfRemove()
