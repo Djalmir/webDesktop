@@ -99,12 +99,31 @@ export default class Link extends HTMLElement {
 		this.url = url || this.getAttribute('url')
 
 		if (isValidHttpUrl(this.url)) {
-			try {
-				this.shadowRoot.querySelector('img').src = `https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=${ this.url }`
+			let img = this.shadowRoot.querySelector('img')
+			img.src = '/assets/loading.svg'
+			let steps = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'ico', "Let's try Google API"]
+			let testImg
+			const tryNextStep = (step) => {
+				if (!testImg) {
+					testImg = document.body.appendChild(new Image())
+					testImg.hidden = true
+				}
+				if (step < steps.length - 1) {
+					testImg.onload = () => {
+						img.src = testImg.src
+						document.body.removeChild(testImg)
+					}
+					testImg.onerror = () => {
+						tryNextStep(++step)
+					}
+					testImg.src = `${ this.url }${ this.url.slice(-1) == '/' ? '' : '/' }favicon.${ steps[step] }`
+				}
+				else {
+					img.src = `https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=${ this.url }`
+					document.body.removeChild(testImg)
+				}
 			}
-			catch (e) {
-				e.preventDefault()
-			}
+			tryNextStep(0)
 		}
 		this.left = left || this.getAttribute('left')
 		this.top = top || this.getAttribute('top')
@@ -258,7 +277,7 @@ export default class Link extends HTMLElement {
 
 				if (this.hoveringElement) {
 					if (this.hoveringElement.id == 'desktop')
-					this.hoveringElement.insertBefore(this, this.hoveringElement.querySelector("[z-for='link in links'][end-z-for]"))
+						this.hoveringElement.insertBefore(this, this.hoveringElement.querySelector("[z-for='link in links'][end-z-for]"))
 					else if (this.hoveringElement.id == 'section') {
 						this.shadowRoot.host.style.position = 'relative'
 						this.style.left = 'unset'
