@@ -100,7 +100,7 @@ export default class Link extends HTMLElement {
 
 		if (isValidHttpUrl(this.url)) {
 			let img = this.shadowRoot.querySelector('img')
-			img.src = '/assets/loading.svg'
+			img.src = `https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=${ this.url }`
 			let steps = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'ico', "Let's try Google API"]
 			let testImg
 			const tryNextStep = (step) => {
@@ -119,7 +119,6 @@ export default class Link extends HTMLElement {
 					testImg.src = `${ this.url }${ this.url.slice(-1) == '/' ? '' : '/' }favicon.${ steps[step] }`
 				}
 				else {
-					img.src = `https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=${ this.url }`
 					document.body.removeChild(testImg)
 				}
 			}
